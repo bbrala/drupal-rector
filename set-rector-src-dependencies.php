@@ -10,6 +10,17 @@ if (!file_exists(__DIR__ . '/vendor/composer/installed.php')) {
     exit(1);
 }
 
+// Get installed packages
+$installed = require __DIR__ . '/vendor/composer/installed.php';
+
+// Get installed Rector version
+$rectorVersion = $installed['versions']['rector/rector-src']['pretty_version'];
+
+if ($rectorVersion === 'dev-main') {
+    echo "Rector is installed from dev-main, this script only works on a specific tag." . PHP_EOL;
+    exit(1);
+}
+
 // These packages we need to pin to the same version as Rector
 $packagedToPin = [
     "rector/rector-doctrine",
@@ -17,12 +28,6 @@ $packagedToPin = [
     "rector/rector-phpunit",
     "rector/rector-symfony",
 ];
-
-// Get installed packages
-$installed = require __DIR__ . '/vendor/composer/installed.php';
-
-// Get installed Rector version
-$rectorVersion = $installed['versions']['rector/rector-src']['pretty_version'];
 
 // Get packages installed by Rector in this version
 $rectorSourceJson = file_get_contents("https://raw.githubusercontent.com/rectorphp/rector/$rectorVersion/vendor/composer/installed.json");
